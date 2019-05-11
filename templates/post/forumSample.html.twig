@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block active %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('actu') }}">Actu</a>
+        </li>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="{{  path('forums') }}">Forums<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href={{  path('about') }}>À propos</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <a class="nav-link" href={{  path('admin') }}>Espace Administration</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block body  %}
+    <br>
+    <div class="container text-break" style="width: 900px">
+    {% for forums in pageForum %}
+            <div class="d-flex w-100 justify-content-between">
+                <h2 class="mb-1">Sujet :
+                    <span style="color: blue;">
+                        {{ forums.topic }}
+                    </span></h2>
+            </div>
+            <br>
+        <div class="d-flex w-100 justify-content-between">
+            <h4 class="mb-1">Description :
+                <span style="color: darkblue;">
+                        {{ forums.description }}
+                    </span></h4>
+        </div>
+        <br>
+            <p>{{ forums.contenu | nl2br }}</p>
+
+            <small class="float-right">Posté par <span class="font-weight-bold">{{ forums.user.username }}</span> le {{ forums.date | date("d/m/Y H:i") }}</small>
+        <br>
+        {% if is_granted('ROLE_ADMIN') %}
+        <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" onclick="popup()" href="{{ path('forums', {'id' : forums.id , 'type' : 'deletePost'}) }}">SUPPRIMER</a></small>
+        {% else %}
+        <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" onclick="popup()" href="{{ path('pageForum', {'id' : forums.id , 'type' : 'post' , 'idReport': forums.id}) }}">Signaler</a></small>
+        {% endif %}
+    <br><br>
+        {% for messages in message %}
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    <span class="h5">{{ messages.user.username }}</span> <span class="text-muted float-right">{{ messages.date | date("d/m/Y H:i") }}</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ messages.corps }}</p>
+
+                    {% if app.user != null %}
+                    {% if messages.user.username is same as(app.user.username) or is_granted('ROLE_ADMIN') %}
+                        <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" onclick="deletePost()" href="{{ path('pageForum', {'id' : forums.id , 'type' : 'deleteMessage' , 'idDelete': messages.id}) }}" >SUPPRIMER</a></small>
+                    {% else %}
+                        <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" onclick="popup()" href="{{ path('pageForum', {'id' : forums.id , 'type' : 'message' , 'idReport': messages.id}) }}" >Signaler</a></small>
+                    {% endif %}
+                    {% else %}
+                        <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" onclick="popup()" href="{{ path('pageForum', {'id' : forums.id , 'type' : 'message' , 'idReport': messages.id}) }}" >Signaler</a></small>
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+        <br><br>
+        {% if is_granted('ROLE_USER') %}
+        <div class="form-group">
+            {{ form_start(messageForm) }}
+            {{ form_row(messageForm.contenu) }}
+        </div>
+        <button class="btn btn-secondary">Envoyer</button>
+        {{ form_end(messageForm) }}
+
+        {% else %}
+            <a href="{{ path('app_login') }}" class="text-info"><h5 class="font-weight-bold">Connectez-vous pour envoyer un message !</h5></a>
+        {% endif %}
+    <br><br><br>
+    </div>
+    {% endfor %}
+
+    <script>
+        function popup() {
+            alert('Le signalement à bien été transféré.')
+        }
+        function deleteMessage(){
+            alert('Le message a bien été supprimé.')
+        }
+        function deletePost(){
+            alert('Le post a bien été supprimé.')
+        }
+    </script>
+{% endblock %}

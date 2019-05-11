@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block active %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('actu') }}">Actu</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('forums') }}">Forums</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href={{  path('about') }}>À propos</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item active">
+                <a class="nav-link" href={{  path('admin') }}>Espace Administration<span class="sr-only">(current)</span></a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block body  %}
+    <br>
+        <h1>Espace Admin !</h1>
+    <br><br>
+        <div class="row">
+            <div class="col-3">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages signalés</a>
+                    <a class="nav-link" id="v-pills-posts-tab" data-toggle="pill" href="#v-pills-posts" role="tab" aria-controls="v-pills-posts" aria-selected="false">Posts signalés</a>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                        {% if messageReport %}
+                            {% for messages in messageReport %}
+                                <br>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <span class="h5">{{ messages.user.username }}</span> <span class="text-muted float-right">{{ messages.date | date("d/m/Y H:i") }}</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">{{ messages.corps }}</p>
+                                        <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" href="{{ path('admin', {'type' : 'message' , 'id': messages.id}) }}">SUPPRIMER</a></small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <h1>Aucun message signalé</h1>
+                        {% endif%}
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-posts" role="tabpanel" aria-labelledby="v-pills-posts-tab">
+                        {% if postReport %}
+                        {% for posts in postReport %}
+                            <br>
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="h5">{{ posts.user.username }}</span> <span class="text-muted float-right">{{ posts.date | date("d/m/Y H:i") }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <h4>Titre</h4>
+                                    <p class="card-text">{{ posts.topic }}</p>
+                                    <h4>Description</h4>
+                                    <p class="card-text">{{ posts.description }}</p>
+                                    <h4>Contenu</h4>
+                                    <p class="card-text">{{ posts.contenu }}</p>
+                                    <small class="float-right bg-danger border border-danger rounded-pill"><a class="text-light" href="{{ path('admin', {'type' : 'post' , 'id': posts.id}) }}">SUPPRIMER</a></small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% else %}
+                            <h1>Aucun post signalé</h1>
+                        {% endif%}
+                </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

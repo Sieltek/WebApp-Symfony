@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block active %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('actu') }}">Actu</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('forums') }}">Forums</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href={{  path('about') }}>À propos</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <a class="nav-link" href={{  path('admin') }}>Espace Administration</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block body %}
+    <br><br><br>
+    <form method="post" style="width: 400px" class="mx-auto">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <h1 class="h3 mb-3 font-weight-normal text-center">Se connecter</h1>
+        <div class="form-group">
+        <label for="inputUsername">Nom d'utilisateur</label>
+        <input type="text" value="{{ last_username }}" name="username" id="inputUsername" style="width: 400px" class="form-control" placeholder="Xx_D4rKS4Suk3_xX" required autofocus>
+        </div>
+        <div class="form-group">
+        <label for="inputPassword">Mot de passe</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="******" required>
+        </div>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <div class="text-center">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" name="_remember_me" class="custom-control-input" id="customSwitch1">
+                <label class="custom-control-label" for="customSwitch1">
+                 Se souvenir de moi
+                </label>
+            </div>
+        <br>
+            <button class="btn btn-lg btn-secondary" type="submit">
+                Confirmer
+            </button>
+        </div>
+    </form>
+{% endblock %}
