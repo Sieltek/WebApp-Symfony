@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block active %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="{{  path('actu') }}">Actu<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('forums') }}">Forums</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href={{  path('about') }}>À propos</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <a class="nav-link" href={{  path('admin') }}>Espace Administration</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block body  %}
+    <br>
+    <h1>Actualité</h1>
+    <br>
+
+    {% for datas in data %}
+        <a href="{{ datas.url }}" target="_blank" class="card mb-3 list-group-item-action" >
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="{{ datas.urlToImage }}" style="height: 230px;" class="card-img-top">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ datas.title }}</h5>
+                        <p class="card-text">{{ datas.description }}</p>
+                        <p class="card-text"><small class="text-muted">{{ datas.author }}</small></p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+{% endblock %}

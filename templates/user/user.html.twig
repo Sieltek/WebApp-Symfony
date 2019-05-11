@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block active %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('actu') }}">Actu</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{  path('forums') }}">Forums</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href={{  path('about') }}>À propos</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <a class="nav-link" href={{  path('admin') }}>Espace Administration</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block body  %}
+    <br>
+    <h1>Profile</h1>
+    <br>
+    <h2>Changer de mot de passe : </h2>
+    <div class="modal-body">
+        {{ form_start(postForm) }}
+        <div class="form-group">
+            {{ form_row(postForm.oldPass) }}
+        </div>
+        <br>
+        <div class="form-group">
+            {{ form_row(postForm.newPass ) }}
+        </div>
+        <div class="form-group">
+            <button class="btn btn-secondary" >Modifier</button>
+            {{ form_end(postForm) }}
+        </div>
+    </div>
+{% endblock %}
